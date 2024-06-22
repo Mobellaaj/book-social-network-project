@@ -1,21 +1,18 @@
 import {Component, OnInit} from '@angular/core';
-import {BookService} from "../../../../services/services/book.service";
-import {Router} from "@angular/router";
 import {PageResponseBookResponse} from "../../../../services/models/page-response-book-response";
-import {borrowBook} from "../../../../services/fn/book/borrow-book";
+import {Router} from "@angular/router";
+import {BookService} from "../../../../services/services/book.service";
 import {BookResponse} from "../../../../services/models/book-response";
 
 @Component({
-  selector: 'app-book-list',
-  templateUrl: './book-list.component.html',
-  styleUrl: './book-list.component.scss'
+  selector: 'app-my-books',
+  templateUrl: './my-books.component.html',
+  styleUrl: './my-books.component.scss'
 })
-export class BookListComponent implements OnInit{
+export class MyBooksComponent implements OnInit{
   bookResponse: PageResponseBookResponse = {};
   page = 0;
   size = 1; // TODO: change this after adding multiple books to DB
-  message: string = '';
-  level: string = 'success'
 
   constructor(
     private router: Router,
@@ -24,17 +21,17 @@ export class BookListComponent implements OnInit{
   }
 
   ngOnInit(): void {
-        this.findAllBooks();
-    }
+    this.findAllBooks();
+  }
 
   private findAllBooks() {
-    this.bookService.findAllBooks({
+    this.bookService.findAllBooksByOwner({
       page: this.page,
       size: this.size
     }).subscribe({
       next: (books) => {
         this.bookResponse = books;
-    }
+      }
     });
   }
 
@@ -66,20 +63,16 @@ export class BookListComponent implements OnInit{
     return this.page == this.bookResponse.totalPages as number - 1
   }
 
-  borrowBook(book: BookResponse) {
-    this.message = '';
-    this.bookService.borrowBook({
-      'book-id': book.id as number,
-    }).subscribe({
-      next: () => {
-        this.level = 'success'
-        this.message = 'Book successfully added to your Book List'
-      },
-      error: (err) => {
-        console.log(err);
-        this.level = 'error'
-        this.message = err.error.error;
-      }
-    })
+  archiveBook(book: BookResponse) {
+
+  }
+
+  shareBook(book: BookResponse) {
+
+  }
+
+  editBook(book: BookResponse) {
+
   }
 }
+
