@@ -12,7 +12,7 @@ import {BookResponse} from "../../../../services/models/book-response";
 export class MyBooksComponent implements OnInit{
   bookResponse: PageResponseBookResponse = {};
   page = 0;
-  size = 1; // TODO: change this after adding multiple books to DB
+  size = 2;
 
   constructor(
     private router: Router,
@@ -64,15 +64,27 @@ export class MyBooksComponent implements OnInit{
   }
 
   archiveBook(book: BookResponse) {
-
+    this.bookService.updateArchivedStatus({
+      'book-id': book.id as number
+    }).subscribe({
+      next: () => {
+        book.archived = !book.archived;
+      }
+    });
   }
 
   shareBook(book: BookResponse) {
-
+    this.bookService.updateShareableStatus({
+      'book-id': book.id as number,
+    }).subscribe({
+      next: () => {
+        book.shareable = !book.shareable;
+      }
+    })
   }
 
   editBook(book: BookResponse) {
-
+    this.router.navigate(['books', 'manage', book.id]);
   }
 }
 

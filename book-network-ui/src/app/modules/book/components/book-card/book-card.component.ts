@@ -25,7 +25,7 @@ export class BookCardComponent {
       return 'data:image/jpg;base64,' + this._book.coverImage;
     }
     //TODO: provide random image if not provided
-    return this._bookCover;
+    return 'https://picsum.photos/1200/800';
   }
 
   @Output() private share: EventEmitter<BookResponse> = new EventEmitter<BookResponse>();

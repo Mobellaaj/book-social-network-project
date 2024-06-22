@@ -13,7 +13,7 @@ import {BookResponse} from "../../../../services/models/book-response";
 export class BookListComponent implements OnInit{
   bookResponse: PageResponseBookResponse = {};
   page = 0;
-  size = 1; // TODO: change this after adding multiple books to DB
+  size = 3;
   message: string = '';
   level: string = 'success'
 
