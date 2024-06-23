@@ -1,12 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {borrowBook} from "../../../../services/fn/book/borrow-book";
 import {BorrowedBookResponse} from "../../../../services/models/borrowed-book-response";
 import {PageResponseBorrowedBookResponse} from "../../../../services/models/page-response-borrowed-book-response";
-import {returnBorrowedBook} from "../../../../services/fn/book/return-borrowed-book";
-import {Router} from "@angular/router";
 import {BookService} from "../../../../services/services/book.service";
-import {BookResponse} from "../../../../services/models/book-response";
 import {FeedbackRequest} from "../../../../services/models/feedback-request";
+import {FeedbackService} from "../../../../services/services/feedback.service";
 
 @Component({
   selector: 'app-borrowed-book-list',
@@ -18,10 +15,11 @@ export class BorrowedBookListComponent implements OnInit{
   feedbackRequest: FeedbackRequest = {bookId: 0, comment: '', note: 0};
   page = 0;
   size = 3;
-  selectedBook: BorrowedBookResponse = {};
+  selectedBook: BorrowedBookResponse | undefined = undefined;
 
   constructor(
     private bookService: BookService,
+    private feedbackService: FeedbackService,
   ) {
   }
 
@@ -29,11 +27,9 @@ export class BorrowedBookListComponent implements OnInit{
       this.findAllBorrowedBooks();
   }
 
-  protected readonly borrowBook = borrowBook;
-
   returnBorrowedBook (book: BorrowedBookResponse) {
     this.selectedBook = book;
-
+    this.feedbackRequest.bookId = book.id as number;
   };
 
   private findAllBorrowedBooks() {
@@ -73,5 +69,27 @@ export class BorrowedBookListComponent implements OnInit{
 
   isLastPage(): boolean {
     return this.page == this.borrowedBooks.totalPages as number - 1
+  }
+
+  returnBook(withFeedback: boolean) {
+    this.bookService.returnBorrowedBook({
+      'book-id': this.selectedBook?.id as number,
+    }).subscribe({
+      next: () => {
+        if (withFeedback) {
+          this.giveFeedback();
+        }
+        this.selectedBook = undefined;
+        this.findAllBorrowedBooks();
+      }
+    });
+  }
+
+  private giveFeedback() {
+    this.feedbackService.saveFeedback({
+      body: this.feedbackRequest
+    }).subscribe({
+      next: () => {}
+    });
   }
 }
